@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Periodic Table of the Elements</title>
+
+    <!-- I used the periodic table from Google as my template as it looked modern, colorful without being too much and stylish with the rounded corners
+     I figured it would be a decent challenge to get close to this. I'm not sure it has a link as such as it's the one that pops up first whe you type
+     "Periodic Table" into google.
+
+-->
+
+    <style>
+      /*I was able to put some basic styles in the body here as I noticed I had many duplicates of these in other classes.
+      Color sets all the text to an off white or RGB 243, all text is bold, all text is sans serif and all text is centered
+      unless overridden - which I have done with other styles as I go*/
+
+      body {
+        background-color: rgb(36, 36, 36);
+        color: rgb(243, 243, 243);
+        font-weight: bold;
+        font-family: sans-serif;
+        text-align: center;
+      }
+
+      /* h3 styles - only used once and made to match the text in the grid and also made to line up with the key block with the 20% indent */
+
+      h3 {
+        text-indent: 20%;
+        text-align: left;
+      }
+
+      /*This grid container class holds all the grid elements
+      my grid is 18 columns wide so I've set each column at 5.5vw so they will fill the screen if a larger screen is available
+      I could have used auto, but the width of the grid columns then seemed to be driven by the width of the name of the element leading
+      to columns that weren't all exactly the same width. This wasn't actually that bad but I went with this solution to keep them
+      all the same. I wanted 18 columns so I specified 18 5.5vw units (these will scale with the viewport size changes by the user)*/
+
+      .grid-container {
+        max-width: 100%; /*makes the container run to the full width of the viewport*/
+        display: grid;
+        grid-template-columns: 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw 5.5vw;
+      }
+
+      /*this grid-item class contains each individual element for my periodic table
+      In terms of styles the attributes below are for the atomic number only
+      I've nested other grid elements so i had greater control over the atomic symbol
+      and name*/
+
+      .grid-item {
+        text-align: left; /* left aligned*/
+        border: 0.2vh solid rgb(0, 0, 0); /*.2vh border (this) in black*/
+        padding: 0.1vh; /*.1vh (small amount) of padding*/
+        font-size: 1.3vh; /*1.3 vh font size - settled on after trial and error, small but readable*/
+        border-radius: 1vh; /*This 1 vh border radius has nicely rounded off each element's corners*/
+        padding-top: 0.2vh; /* slight amount of padding to bring the number a tiny bit away from the top edge */
+      }
+
+      /* key container class to hold the grid elements for the color key*/
+      .key-container {
+        max-width: 40%; /* set max width  of container as 40% viewport width*/
+        display: grid; /*grid display type set*/
+        grid-template-columns: 20% 20% 20% 20% 20%; /* 5 x20% === 100% so these 5 will span the entire width of the container equally */
+        margin-left: 20%; /* indent 20% of the screen width - lines up nicely with the colour blocks */
+      }
+
+      /*key-items are the individual color blocks of the key*/
+      .key-item {
+        font-size: 1.2vh; /* size of text */
+        border-radius: 1vh; /* radius for the corners */
+        border: 0.2vh solid rgb(0, 0, 0); /* thin black border*/
+        padding: 0.3vh; /*Padding for the content (keeps its away from the edge of the box and looks neater */
+        max-height: 3vh; /* constrains the maximum height the gide cell can reach*/
+      }
+
+      /*THis class styles up the name of the element in the grid cell */
+      .eName {
+        font-size: 1vh; /* height set here*/
+        text-align: center; /* Centred text */
+        padding-bottom: 0.2vh; /* tin bit of padding to keep it away from the very bottom edge of the cell - looks neater */
+      }
+
+      /* Similar to eName above, this style is for the main symbol in each grid cell */
+      .eSymbol {
+        font-size: 2.6vh; /* Size set so it's significantly bigger than other cell content*/
+        text-align: center; /*Centred text*/
+      }
+
+      /*This class is the "blank" cell used to span the grid where there is no content - it spans column 2 to the edge of 18*/
+      .topRowBlank {
+        grid-column: 2/18;
+      }
+
+      /*this class is the "blank" cell used to span the gap on rows 2 and 3 - it spans 10 "empty" cells 3 to the edge of 13*/
+      .secondAndThirdRowBlank {
+        grid-column: 3/13;
+      }
+
+      /* blank cell used to span the 3 cell gap for the bottom 2 rows*/
+      .lowerLeftBlank {
+        grid-column: 1/4;
+      }
+
+      /* blank cell used to span the 1 cell gap for the bottom 2 rows*/
+      .lowerRightBlank {
+        grid-column: 1/18;
+      }
+
+      /* This spacer is for the gap between the "main" table and the bottom 2 rows. It asct as a separator and is set to span the full width*/
+      .lowerBlank {
+        grid-column: 1/19;
+      }
+
+      /*Block of classes to set the colours for the types of elements
+these can then be added to the classes in the grid*/
+      .alkaliMetals {
+        background-color: rgb(66, 25, 39);
+      }
+      .alkalineEarthMetals {
+        background-color: rgb(194, 75, 75);
+      }
+      .transitionMetals {
+        background-color: rgb(86, 54, 112);
+      }
+      .postTransitionMetals {
+        background-color: rgb(0, 83, 0);
+      }
+      .metalloids {
+        background-color: rgb(75, 64, 0);
+      }
+      .reactiveNonMetals {
+        background-color: rgb(53, 107, 255);
+      }
+      .nobleGasses {
+        background-color: rgb(121, 194, 160);
+      }
+      .lanthanides {
+        background-color: rgb(189, 74, 122);
+      }
+      .actinides {
+        background-color: rgb(129, 87, 58);
+      }
+      .unknown {
+        background-color: rgb(128, 128, 128);
+      }
+
+      /* Media Query section*/
+      img {
+        display: none; /*image tag made invisible with display none*/
+      }
+
+      /*This media query basically says if the screen size's width is 900 or less pixels
+        display the image in the img tag then:
+        make display of .grid-container to none i.e. it's now invisible - this hides the periodic table grid
+        .key-container is also set to display non as it's included in the image
+        h3 tag is also hidden with display none as it's also included in the image
+        in short, when the viewport is less that 800px, the grid hides everything else and displays only the image. 
+
+        I went with 900px as it's the point where the element names start overlapping the edge of th grid cells
+        I looked at wrapping the text but that didn't solve anything.
+
+*/
+      @media screen and (max-width: 900px), screen and (max-height: 600px) {
+        img {
+          display: block;
+        }
+
+        .grid-container {
+          display: none;
+        }
+
+        .key-container {
+          display: none;
+        }
+
+        h3 {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>The Periodic Table of the Elements</h1>
+    <!-- Title that will appear in the browsers top title bar-->
+    <br /><br />
+    <!-- -->
+
+    <!--THis img tag is controlled by the media query. With the viewport over 900 px it won't display anything
+    as soon as this drops under 900px the imag will be displayed instead of the grid version of the periodic table-->
+    <img
+      src="Table_small.jpg"
+      alt="An image of the periodic table of the elements"
+    />
+    <!-- The grid container is opened up here with the div and class declaration. All the styles defined above pull through here now-->
+    <div class="grid-container center">
+      <!-- the grid item class is used to create each cell of the grid - defined by the styles above
+        and also hold 2 other divs each with a class to hold the Symbol (eSymbol) and the full name (eName)
+        I did it this way as I thought I'd need a bit of control over the look and style of each of the pieces
+        of data. I've gone with a larger bold element symbol, so a larger H for hydrogen, with smaller atomic number
+        on the top left of the grid element and the full name central under the symbol. Each grid-item
+        also has the correct colour code class assigned to background color such as reactiveNonMetals so it is easier to see
+        groups of elements in the table. I used the &nbsp; escape sequence to put a couple of blank spaces in front of the
+        atomic number to keep it away from the edge of the box. ut and paste this piece of HTML for all the elements ......-->
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;1
+        <div class="eSymbol">H</div>
+        <div class="eName">Hydrogen</div>
+      </div>
+
+      <!--I've a few div / classes like this throughout to help line up the table
+      Taking the first row as an example, In reality I have only Hydrogen and helium
+      at opposite ends of the table, column 1 for Hydrogen and column 18 for Helium
+      This topRowBlank is a 'spacer' to span rows 2 through the edge of 18 and help me lay out the table
+      as needed-->
+      <div class="topRowBlank"></div>
+
+      <div class="grid-item nobleGasses">
+        &nbsp;&nbsp;2<br />
+        <div class="eSymbol">He</div>
+        <div class="eName">Helium</div>
+      </div>
+      <div class="grid-item alkaliMetals">
+        &nbsp;&nbsp;3<br />
+        <div class="eSymbol">Li</div>
+        <div class="eName">Lithium</div>
+      </div>
+      <div class="grid-item alkalineEarthMetals">
+        &nbsp;&nbsp;4<br />
+        <div class="eSymbol">Be</div>
+        <div class="eName">Berylium</div>
+      </div>
+
+      <!--blank spacer inserted here-->
+      <div class="secondAndThirdRowBlank"></div>
+
+      <div class="grid-item metalloids">
+        &nbsp;&nbsp;5<br />
+        <div class="eSymbol">B</div>
+        <div class="eName">Boron</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;6<br />
+        <div class="eSymbol">C</div>
+        <div class="eName">Carbon</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;7<br />
+        <div class="eSymbol">N</div>
+        <div class="eName">Nitrogen</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;8<br />
+        <div class="eSymbol">O</div>
+        <div class="eName">Oxygen</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;9<br />
+        <div class="eSymbol">F</div>
+        <div class="eName">Fluorine</div>
+      </div>
+      <div class="grid-item nobleGasses">
+        &nbsp;&nbsp;10<br />
+        <div class="eSymbol">Ne</div>
+        <div class="eName">Neon</div>
+      </div>
+      <div class="grid-item alkaliMetals">
+        &nbsp;&nbsp;11<br />
+        <div class="eSymbol">Na</div>
+        <div class="eName">Sodium</div>
+      </div>
+      <div class="grid-item alkalineEarthMetals">
+        &nbsp;&nbsp;12<br />
+        <div class="eSymbol">Mg</div>
+        <div class="eName">Magnesium</div>
+      </div>
+
+      <!--This div / class spans the 2nd row where no element appear to help with layout
+      fully defined above in the styles section to span the 10 columns 3 through 13-->
+      <div class="secondAndThirdRowBlank"></div>
+
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;13<br />
+        <div class="eSymbol">Al</div>
+        <div class="eName">Aluminium</div>
+      </div>
+      <div class="grid-item metalloids">
+        &nbsp;&nbsp;14<br />
+        <div class="eSymbol">Si</div>
+        <div class="eName">Silicon</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;15<br />
+        <div class="eSymbol">P</div>
+        <div class="eName">Phosphorous</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;16<br />
+        <div class="eSymbol">S</div>
+        <div class="eName">Sulphur</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;17<br />
+        <div class="eSymbol">Cl</div>
+        <div class="eName">Chlorine</div>
+      </div>
+      <div class="grid-item nobleGasses">
+        &nbsp;&nbsp;18<br />
+        <div class="eSymbol">Ar</div>
+        <div class="eName">Argon</div>
+      </div>
+      <div class="grid-item alkaliMetals">
+        &nbsp;&nbsp;19<br />
+        <div class="eSymbol">K</div>
+        <div class="eName">Potassium</div>
+      </div>
+      <div class="grid-item alkalineEarthMetals">
+        &nbsp;&nbsp;20<br />
+        <div class="eSymbol">Ca</div>
+        <div class="eName">Cadmium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;21<br />
+        <div class="eSymbol">Sc</div>
+        <div class="eName">Scandium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;22<br />
+        <div class="eSymbol">Ti</div>
+        <div class="eName">Titanium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;23<br />
+        <div class="eSymbol">V</div>
+        <div class="eName">Vanadium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;24<br />
+        <div class="eSymbol">Cr</div>
+        <div class="eName">Chromium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;25<br />
+        <div class="eSymbol">Mn</div>
+        <div class="eName">Manganese</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;26<br />
+        <div class="eSymbol">Fe</div>
+        <div class="eName">Iron</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;27<br />
+        <div class="eSymbol">Co</div>
+        <div class="eName">Cobalt</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;28<br />
+        <div class="eSymbol">Ni</div>
+        <div class="eName">Nickel</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;29<br />
+        <div class="eSymbol">Cu</div>
+        <div class="eName">Copper</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;30<br />
+        <div class="eSymbol">Zn</div>
+        <div class="eName">Zinc</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;31<br />
+        <div class="eSymbol">Ga</div>
+        <div class="eName">Gallium</div>
+      </div>
+      <div class="grid-item metalloids">
+        &nbsp;&nbsp;32<br />
+        <div class="eSymbol">Ge</div>
+        <div class="eName">Germanium</div>
+      </div>
+      <div class="grid-item metalloids">
+        &nbsp;&nbsp;33<br />
+        <div class="eSymbol">As</div>
+        <div class="eName">Arsenic</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;34<br />
+        <div class="eSymbol">Se</div>
+        <div class="eName">Selenium</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;35<br />
+        <div class="eSymbol">Br</div>
+        <div class="eName">Bromine</div>
+      </div>
+      <div class="grid-item nobleGasses">
+        &nbsp;&nbsp;36<br />
+        <div class="eSymbol">Kr</div>
+        <div class="eName">Krypton</div>
+      </div>
+      <div class="grid-item alkaliMetals">
+        &nbsp;&nbsp;37<br />
+        <div class="eSymbol">Rb</div>
+        <div class="eName">Rubidium</div>
+      </div>
+      <div class="grid-item alkalineEarthMetals">
+        &nbsp;&nbsp;38<br />
+        <div class="eSymbol">Sr</div>
+        <div class="eName">Strontium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;39<br />
+        <div class="eSymbol">Y</div>
+        <div class="eName">Yttrium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;40<br />
+        <div class="eSymbol">Zr</div>
+        <div class="eName">Zirconium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;41<br />
+        <div class="eSymbol">Nb</div>
+        <div class="eName">Niobium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;42<br />
+        <div class="eSymbol">Mo</div>
+        <div class="eName">Molybdenum</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;43<br />
+        <div class="eSymbol">Tc</div>
+        <div class="eName">Tecnetium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;44<br />
+        <div class="eSymbol">Ru</div>
+        <div class="eName">Ruthenium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;45<br />
+        <div class="eSymbol">Rh</div>
+        <div class="eName">Rhodium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;46<br />
+        <div class="eSymbol">Pd</div>
+        <div class="eName">Palladium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;47<br />
+        <div class="eSymbol">Ag</div>
+        <div class="eName">Silver</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;48<br />
+        <div class="eSymbol">Cd</div>
+        <div class="eName">Cadmium</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;49<br />
+        <div class="eSymbol">In</div>
+        <div class="eName">Indium</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;50<br />
+        <div class="eSymbol">Sn</div>
+        <div class="eName">Tin</div>
+      </div>
+      <div class="grid-item metalloids">
+        &nbsp;&nbsp;51<br />
+        <div class="eSymbol">Sb</div>
+        <div class="eName">Antimony</div>
+      </div>
+      <div class="grid-item metalloids">
+        &nbsp;&nbsp;52<br />
+        <div class="eSymbol">Te</div>
+        <div class="eName">Tellurium</div>
+      </div>
+      <div class="grid-item reactiveNonMetals">
+        &nbsp;&nbsp;53<br />
+        <div class="eSymbol">I</div>
+        <div class="eName">Iodine</div>
+      </div>
+      <div class="grid-item nobleGasses">
+        &nbsp;&nbsp;54<br />
+        <div class="eSymbol">Xe</div>
+        <div class="eName">Xenon</div>
+      </div>
+      <div class="grid-item alkaliMetals">
+        &nbsp;&nbsp;55<br />
+        <div class="eSymbol">Cs</div>
+        <div class="eName">Caesium</div>
+      </div>
+      <div class="grid-item alkalineEarthMetals">
+        &nbsp;&nbsp;56<br />
+        <div class="eSymbol">Ba</div>
+        <div class="eName">Barium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;57<br />
+        <div class="eSymbol">La</div>
+        <div class="eName">Lanthanum</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;72<br />
+        <div class="eSymbol">Hf</div>
+        <div class="eName">Hafnium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;73<br />
+        <div class="eSymbol">Ta</div>
+        <div class="eName">Tantalum</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;74<br />
+        <div class="eSymbol">W</div>
+        <div class="eName">Tungsten</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;75<br />
+        <div class="eSymbol">Re</div>
+        <div class="eName">Rhenium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;76<br />
+        <div class="eSymbol">76</div>
+        <div class="eName">Osmium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;77<br />
+        <div class="eSymbol">Ir</div>
+        <div class="eName">Iridium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;78<br />
+        <div class="eSymbol">Pt</div>
+        <div class="eName">Platinum</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;79<br />
+        <div class="eSymbol">Ag</div>
+        <div class="eName">Gold</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;80<br />
+        <div class="eSymbol">Hg</div>
+        <div class="eName">Mercury</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;81<br />
+        <div class="eSymbol">Th</div>
+        <div class="eName">Thallium</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;82<br />
+        <div class="eSymbol">Pb</div>
+        <div class="eName">Lead</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;83<br />
+        <div class="eSymbol">Bi</div>
+        <div class="eName">Bismuth</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;84<br />
+        <div class="eSymbol">Po</div>
+        <div class="eName">Polnium</div>
+      </div>
+      <div class="grid-item postTransitionMetals">
+        &nbsp;&nbsp;85<br />
+        <div class="eSymbol">At</div>
+        <div class="eName">Astatine</div>
+      </div>
+      <div class="grid-item nobleGasses">
+        &nbsp;&nbsp;86<br />
+        <div class="eSymbol">Rd</div>
+        <div class="eName">Radon</div>
+      </div>
+      <div class="grid-item alkaliMetals">
+        &nbsp;&nbsp;87<br />
+        <div class="eSymbol">Fr</div>
+        <div class="eName">Francium</div>
+      </div>
+      <div class="grid-item alkalineEarthMetals">
+        &nbsp;&nbsp;88<br />
+        <div class="eSymbol">Ra</div>
+        <div class="eName">Radium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;89<br />
+        <div class="eSymbol">Ac</div>
+        <div class="eName">Actinium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;104<br />
+        <div class="eSymbol">Rf</div>
+        <div class="eName">Rutherfordium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;105<br />
+        <div class="eSymbol">Db</div>
+        <div class="eName">Dubnium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;106<br />
+        <div class="eSymbol">Sg</div>
+        <div class="eName">Seaborgium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;107<br />
+        <div class="eSymbol">Bh</div>
+        <div class="eName">Bohrium</div>
+      </div>
+      <div class="grid-item transitionMetals">
+        &nbsp;&nbsp;108<br />
+        <div class="eSymbol">Hs</div>
+        <div class="eName">Hassium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;109<br />
+        <div class="eSymbol">Mt</div>
+        <div class="eName">Meitnerium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;110<br />
+        <div class="eSymbol">Ds</div>
+        <div class="eName">Darmstadtium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;111<br />
+        <div class="eSymbol">Cn</div>
+        <div class="eName">Roentgenium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;112<br />
+        <div class="eSymbol">Cn</div>
+        <div class="eName">Copernicium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;113<br />
+        <div class="eSymbol">Nh</div>
+        <div class="eName">Nihonium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;114<br />
+        <div class="eSymbol">Fl</div>
+        <div class="eName">Flerovium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;115<br />
+        <div class="eSymbol">Mc</div>
+        <div class="eName">Moscovium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;116<br />
+        <div class="eSymbol">Lv</div>
+        <div class="eName">Livermorium</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;117<br />
+        <div class="eSymbol">TS</div>
+        <div class="eName">Tennessine</div>
+      </div>
+      <div class="grid-item unknown">
+        &nbsp;&nbsp;118<br />
+        <div class="eSymbol">Og</div>
+        <div class="eName">Oganesson</div>
+      </div>
+
+      <!--Lower blank to separate the main table from th e2 bottom rows-->
+      <div class="lowerBlank"></div>
+
+      <!--Lower left blank  to span the 3 empty cells-->
+      <div class="lowerLeftBlank"></div>
+
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;58<br />
+        <div class="eSymbol">Ce</div>
+        <div class="eName">Cerium</div>
+      </div>
+
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;59<br />
+        <div class="eSymbol">Pr</div>
+        <div class="eName">Praseodymium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;60<br />
+        <div class="eSymbol">Ne</div>
+        <div class="eName">Nedymium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;61<br />
+        <div class="eSymbol">Pm</div>
+        <div class="eName">Promethium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;62<br />
+        <div class="eSymbol">Sm</div>
+        <div class="eName">Samarium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;63<br />
+        <div class="eSymbol">Eu</div>
+        <div class="eName">Europium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;64<br />
+        <div class="eSymbol">Gd</div>
+        <div class="eName">Gadolinium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;65<br />
+        <div class="eSymbol">Tb</div>
+        <div class="eName">Terbium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;66<br />
+        <div class="eSymbol">Dy</div>
+        <div class="eName">Dysprosium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;67<br />
+        <div class="eSymbol">Ho</div>
+        <div class="eName">Holmium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;68<br />
+        <div class="eSymbol">Er</div>
+        <div class="eName">Erbium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;69<br />
+        <div class="eSymbol">Tm</div>
+        <div class="eName">Thulium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;70<br />
+        <div class="eSymbol">Yb</div>
+        <div class="eName">Ytterbium</div>
+      </div>
+      <div class="grid-item lanthanides">
+        &nbsp;&nbsp;71<br />
+        <div class="eSymbol">Lu</div>
+        <div class="eName">Lutetium</div>
+      </div>
+
+      <!--Lower left blank  to span the 3 empty cells-->
+      <div class="lowerLeftBlank"></div>
+
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;90<br />
+        <div class="eSymbol">Th</div>
+        <div class="eName">Thorium</div>
+      </div>
+
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;91<br />
+        <div class="eSymbol">Pa</div>
+        <div class="eName">Protactinium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;92<br />
+        <div class="eSymbol">U</div>
+        <div class="eName">Uranium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;93<br />
+        <div class="eSymbol">Np</div>
+        <div class="eName">Neptunium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;94<br />
+        <div class="eSymbol">Pu</div>
+        <div class="eName">Plutonium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;95<br />
+        <div class="eSymbol">Am</div>
+        <div class="eName">Americium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;96<br />
+        <div class="eSymbol">Cm</div>
+        <div class="eName">Curium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;97<br />
+        <div class="eSymbol">Bk</div>
+        <div class="eName">Berkelium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;98<br />
+        <div class="eSymbol">Cg</div>
+        <div class="eName">Californium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;99<br />
+        <div class="eSymbol">Es</div>
+        <div class="eName">Einsteinium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;100<br />
+        <div class="eSymbol">Fm</div>
+        <div class="eName">Fermium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;101<br />
+        <div class="eSymbol">Md</div>
+        <div class="eName">Mendelevium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;102<br />
+        <div class="eSymbol">No</div>
+        <div class="eName">Nobelium</div>
+      </div>
+      <div class="grid-item actinides">
+        &nbsp;&nbsp;103<br />
+        <div class="eSymbol">Lr</div>
+        <div class="eName">Lawrencium</div>
+      </div>
+    </div>
+    <br />
+    <h3>Key:</h3>
+    <!--H3 to denote key section-->
+
+    <!--This table is for the key so the styles pull through from the definitions at the top
+    it's a small and simplified version for the main table but this is 5 columns with 2 rows-->
+    <!--re-used the classes to pull through the colours for the groups of elements-->
+
+    <div class="key-container">
+      <div class="key-item alkaliMetals">Alkali Metals</div>
+      <div class="key-item alkalineEarthMetals">Alkaline Earth Metals</div>
+      <div class="key-item transitionMetals">Transition Metals</div>
+      <div class="key-item postTransitionMetals">Post Transition Metals</div>
+      <div class="key-item metalloids">Metalloids</div>
+      <div class="key-item reactiveNonMetals">Reactive Non-Metals</div>
+      <div class="key-item nobleGasses">Noble Gasses</div>
+      <div class="key-item lanthanides">Lanthanides</div>
+      <div class="key-item actinides">Actinides</div>
+      <div class="key-item unknown">Unknown Properties</div>
+    </div>
+  </body>
+</html>
