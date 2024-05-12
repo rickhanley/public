@@ -1,0 +1,212 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: 40px;
+    font-weight: bold;
+}
+
+
+.selection-block
+{
+  background-color: #363d44;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.navbar-nav .nav-item .nav-link.active,
+.navbar-nav .nav-item .nav-link:focus,
+.navbar-nav .nav-item .nav-link:hover {
+  color: #e63946; /* Change the color to red when clicked, focused, or hovered */
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.overlap {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+table {
+  width: 500px; /* Adjust width according to your requirements */
+  border-collapse: collapse;
+}
+
+td {
+  width: 40px; /* Adjust width according to your requirements */
+  border: 1px solid white;
+  padding: 6px;
+  text-align: center;
+}
+
+p
+{
+  text-align: justify;
+}
+
+li
+{
+  text-align: justify;
+}
+.big-font
+{
+  font-size: 1.8rem;
+}
+.centre
+{
+  text-align: center;
+}
+.tiny
+{
+  font-size: .8rem;
+}
+.container
+{
+  margin: 0 auto;
+}
+
+.label
+{
+    font-weight: bold;
+}
+
+.master_container
+{
+  width: 500px;
+  margin: 0 auto;
+}
+
+/* .quoted {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+} */
+.body
+{
+    color: white;
+}
+
+.chordCanvas
+{
+    width:200px;
+    height:400px;
+}
+
+.chords
+{
+    margin-right: 25px;
+    margin-bottom: 30px;
+}
+
+.custom-brand {
+    margin-right: 20px; /* Adjust the margin as needed */
+}
+
+
+.custom-color {
+    color: #FFBA08 !important;
+}
+
+.selected {
+  background-color: orange
+}
+
+.custom-btn {
+  background-color: #2f6690;
+  color: #ffffff;
+  border-color: #ffba08
+}
+
+.larger-text {
+  font-size: 40px;
+}
+
+
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .svg-element {
+    opacity: 0;
+    animation: fadeIn 1.4s ease-in-out forwards;
+  }
+
+  .svg-element:nth-of-type(1) {
+    animation-delay: 0.2s;
+  }
+
+  .svg-element:nth-of-type(2) {
+    animation-delay: 0.4s;
+  }
+
+  .svg-element:nth-of-type(3) {
+    animation-delay: 0.6s;
+  }
+
+  .svg-element:nth-of-type(4) {
+    animation-delay: 0.8s;
+  }
+
+  .svg-element:nth-of-type(5) {
+    animation-delay: 1s;
+  }
+
+  .svg-element:nth-of-type(6) {
+    animation-delay: 1.2s;
+  }
+
+  .svg-element:nth-of-type(7) {
+    animation-delay: 1.4s;
+  }
+
+  .svg-element:nth-of-type(8) {
+    animation-delay: 1.6s;
+  }
+
+  .svg-element:nth-of-type(9) {
+    animation-delay: 1.8s;
+  }
+
+  .svg-element:nth-of-type(10) {
+    animation-delay: 2s;
+  }
+
+  .svg-element:nth-of-type(11) {
+    animation-delay: 2.2s;
+  }
+
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .fade-out {
+    opacity: 1;
+    animation: fadeOut 1.4s ease-in-out forwards;
+  }
+
+  .svg-element:nth-of-type(1) {
+    animation-delay: 0.1s;
+  }
+
+  .svg-element:nth-of-type(2) {
+    animation-delay: 0.2s;
+  }
+
+  .svg-element:nth-of-type(3) {
+    animation-delay: 0.3s;
+  }

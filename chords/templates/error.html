@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+
+{% block grid%}
+
+<!-- <script src="{{ url_for('static', filename='script.js') }}"></script> -->
+<!-- <script>
+    // Use Jinja templating to inject values into JavaScript
+    var root = "{{ root }}";
+    var family = "{{ family }}";
+
+    // Now you can use the 'root' and 'family' variables in your JavaScript code
+    console.log("Root:", root);
+    console.log("Family:", family);
+</script> -->
+<br>
+<h2>Please make a valid selection!</h2>
+<img src="{{ url_for('static', filename='Guitar.jpg') }}" alt="Guitar">
+
+{% endblock %}
+

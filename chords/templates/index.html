@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block table %}
+<div class="selection-block">
+<form action="/grid" method="post">
+  <select class ="form-select form-select-md mb-2 w-50 mx-auto" name="root" id="root">
+  <option disabled selected>Root</option>
+  <option value="C">C</option>
+  <option value="C#">C# / D&#9837</option>
+  <option value="D">D</option>
+  <option value="Eb">E&#9837 / D#</option>
+  <option value="E">E</option>
+  <option value="F">F</option>
+  <option value="F#">F# / G&#9837</option>
+  <option value="G">G</option>
+  <option value="Ab">A&#9837 / G#</option>
+  <option value="A">A</option>
+  <option value="Bb">B&#9837 / A#</option>
+  <option value="B">B</option>
+  </select>
+
+  <select class = "form-select form-select-md mb-2 w-50 mx-auto" name="family" id="family">
+  <option disabled selected>Chord Family</option>
+  <option value="Major">Major</option>
+  <option value="Minor">Minor</option>
+  <option value="Major 7th">Major 7</option>
+  <option value="Major 7+">Major 7+</option>
+  <option value="Major 7b5">Major 7 &#9837 5</option>
+  <option value="Minor (Major 7)">Minor (Major 7)</option>
+  <option value="Minor 7">Minor 7</option>
+  <option value="6">6</option>
+  <option value="Minor 6">Minor 6</option>
+  <option value="Minor 6/9">Minor 6/9</option>
+  <option value="Major 13th">Major 13th</option>
+  <option value="Major 9 #11">Major 9 #11</option>
+  <option value="7th">7th</option>
+  <option value="Sus 2">Sus 2</option>
+  <option value="Sus 4">Sus 4</option>
+  <option value="Augmented">Aug</option>
+  <option value="Dim">Dim</option>
+  <option value="Major 9th">Major 9th</option>
+  <option value="Minor (Major 9)">Minor (Major 9)</option>
+  <option value="Minor 9">Minor 9</option>
+  <option value="Minor add 9">Minor add 9</option>
+  <option value="Add 9">Add 9</option>
+  <option value="9th">9th</option>
+  <option value="Minor 11">Minor 11th</option>
+  <option value="7 Flat 9">7 &#9837;9</option>
+  <option value="7 #9">7 #9</option>
+  <option value="13 Flat 9">13 &#9837;9</option>
+  <option value="7 +">7 +</option>
+  <option value="7 Flat 5">7 &#9837;5</option>
+  <option value="7 Flat 9 Sharp 5">7 &#9837;9 #5</option>
+  <option value="7 #9 #5">7 #9 #5</option>
+  <option value="9 #11">9 #11</option>
+  <option value="9 +">9 +</option>
+  <option value="7 Sus 4">7 sus 4</option>
+  <option value="9 Sus 4">9 sus 4</option>
+  <option value="13 sus 4">13 sus 4</option>
+  <option value="Minor 7 Flat 5">Minor 7 &#9837;5</option>
+  <option value="Diminished">Diminished</option>
+  <option value="Diminished 7">Diminished 7</option>
+  <option value="13th">13th</option>
+  </select>
+    <button type="submit" class="btn btn-primary btn-md w-50 d-block mx-auto custom-btn">Show me!</button>
+    <!-- <button class="btn btn-primary" type="submit">Quote</button> -->
+</form>
+</div>
+
+{% endblock %}

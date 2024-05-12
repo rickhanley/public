@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block title %}<br><h2 class="centre">Scales</h2><br>{% endblock %}
+
+{% set root=root %}
+{% set scale=scale%}
+{% set user_scale=user_scale %}
+{% set guitar_neck=guitar_neck%}
+{% set scales_dict=scales_dict %}
+
+{% block content %}
+<!-- <p>{{root}}</p>
+<p>{{scale}}</p>
+<p>{{user_scale}}</p> -->
+<!-- <p>{{guitar_neck}}</p> -->
+
+<div class="selection-block">
+<form action="/scales" method="post">
+  <select class ="form-select form-select-md mb-2 w-50 mx-auto" name="root" id="root">
+  <option disabled selected>Root</option>
+  <option value="C">C</option>
+  <option value="C#">C# / D&#9837</option>
+  <option value="D">D</option>
+  <option value="D#">E&#9837 / D#</option>
+  <option value="E">E</option>
+  <option value="F">F</option>
+  <option value="F#">F# / G&#9837</option>
+  <option value="G">G</option>
+  <option value="G#">A&#9837 / G#</option>
+  <option value="A">A</option>
+  <option value="A#">B&#9837 / A#</option>
+  <option value="B">B</option>
+  </select>
+
+  <select class = "form-select form-select-md mb-2 w-50 mx-auto" name="scale" id="scale">
+    <option disabled selected style="color: black; font-weight: bold;">Scale Selction</option>
+    <option disabled  style="color: black; font-weight: bold;">Pentatonics</option>
+  <option value="Major Pentatonic">Major Pentatonic</option>
+  <option value="Minor Pentatonic">Minor Pentatonic</option>
+  <option disabled  style="color: black; font-weight: bold;">Major Scale Modes</option>
+  <option value="Major">Major (Ionian / I) </option>
+  <option value="Minor">Minor / Natural Minor (Aeolian / VI)</option>
+  <option value="Dorian">Dorian / II </option>
+  <option value="Phrygian">Phrygian / III </option>
+  <option value="Lydian">Lydian / IV </option>
+  <option value="Mixolydian">Mixolydian / V </option>
+  <option value="Locrian">Locrian / VII </option>
+  <option disabled  style="color: black; font-weight: bold;">Other Scales</option>
+  <option value="Blues">Blues</option>
+  <option value="Whole Tone">Whole Tone</option>
+  <option value="Jazz Melodic Minor">Jazz Melodic Minor</option>
+  <option value="Harmonic Minor">Harmonic Minor</option>
+  <option value="Diminished">Diminished (Whole / Half)</option>
+  <option value="Lydian b 7">Lydian &#9837 7</option></select>
+  <button type="submit" class="btn btn-primary btn-md w-50 d-block mx-auto custom-btn">Show me!</button>
+    <!-- <button class="btn btn-primary" type="submit">Quote</button> -->
+</form>
+</div>
+  <br></br>
+{% if root and scale != None %}
+  <h2>{{root}}  {{scale}}</h2>
+{% endif %}
+
+  <br>
+<div class="overlap container">
+<svg viewBox="0 0 900 280"b width="850" height="250" class="">
+    <rect x="0" y="0" rx="10" ry="10" width="100%" height="100%" fill="#F8F9FA" />
+
+
+      {% for i in range(17) %}
+        <line x1="{{ 50 + i * 50 }}" y1="50" x2="{{ 50 + i * 50 }}" y2="228" stroke="black" stroke-width="{{ 6 if i == 0 else 2 }}" />
+      {% endfor %}
+
+<!-- horizontal frets lines -->
+
+    {% for i in range(6) %}
+    <line x1="47" y1="{{50 + (i * 35) }}" x2="851" y2="{{50 + (i * 35) }}" stroke="black" stroke-width="{{1 + i}}" />
+    {% endfor %}
+
+
+    <circle cx="175" cy="137.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+    <circle cx="275" cy="137.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+    <circle cx="375" cy="137.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+    <circle cx="475" cy="137.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+
+    <circle cx="625" cy="102.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+    <circle cx="625" cy="172.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+
+    <circle cx="725" cy="137.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+    <circle cx="825" cy="137.5" r="10" fill="#adb5bd" style="z-index: 10;" />
+
+    {% for string in guitar_neck %}
+    {% set index = guitar_neck[string].index(root) if root in guitar_neck[string] else None %}
+    <!-- <p> {{index }} </p> -->
+    {% set scale_start_index = 10 %}
+        {% if index is not none %}
+            {% for i in range(scale_start_index - 9, scales_dict[scale]|length) %}
+                <!-- <p>Root {{root}} found at index {{index}} in {{string}} counter_index: {{scale_index}}    scales_dict[scale]|length: {{scales_dict[scale]|length}}</p> -->
+                {% if (scales_dict[scale][i] + index) * 50 + 35 < 850 and (scales_dict[scale][i] + index) * 50 + 35 > 50 %}
+                <circle cx="{{(scales_dict[scale][i] + index) * 50 + 35 }}" cy="{{((string|int - 1) * 35 + 50)}}" r="8" fill="black" style="z-index: 10;" class="svg-element" />
+                <!-- <p>i: {{i}}</p> -->
+                {% endif %}
+                {% if ((index == scales_dict[scale][i] + index - 12) or (index == scales_dict[scale][i] + index + 12) or (index == scales_dict[scale][i] + index)) and ((scales_dict[scale][i] + index) * 50 + 35) < 850  %}
+                <circle cx="{{(scales_dict[scale][i] + index) * 50 + 35 }}" cy="{{((string|int - 1) * 35 + 50)}}" r="6" fill="red" stroke-width="2" style="z-index: 10;" class="svg-element" />
+                {% endif %}
+                {% if (scales_dict[scale][i] + index) * 50 + 35 < 50 %}
+                <circle cx="{{(scales_dict[scale][i] + index) * 50 + 35 }}" cy="{{((string|int - 1) * 35 + 50)}}" r="7" fill="none" stroke="black" stroke-width="2" style="z-index: 10;" class="svg-element" />
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+
+</svg>
+</div>
+
+
+{% endblock %}
+

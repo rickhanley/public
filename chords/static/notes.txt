@@ -1,0 +1,13 @@
+fret_number and open_or_not need looking at to implement the sharp / flats
+Also the code that prints the notes names towards the bottom of grid.html
+and the code that prints orange dots for root notes.
+
+
+
+For the scales part
+
+We have the root and scale type from the user.
+Loop over the 6 strings
+find the root
+count back against the string looking for notes
+    so if we find the root on 7th fret

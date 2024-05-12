@@ -1,0 +1,228 @@
+{% extends "index.html" %}
+{% block grid%}
+
+
+        <h4 style="padding-top: 15px" class="heading-control">{{root}} {{family}} Chord Dictionary</h4>
+        </br>
+
+        {# set up variables to use that have been passed in from the route
+           loop over each chord passed in so we print each chord diagram in the "family" #}
+
+        {% for chord in chords %}
+                {% set fret_number = fret_number(root, chord.root_string, chord.fret_modifier) + chord.fret_modifier|int() %}
+                {% set total_notes = chord.notes | finger_counter %}
+                {% set open_or_not = root | open_or_not(chord['root_string'], chord.fret_modifier|int(), fret_number) %}
+                {% set fret_number = fret_number|int() %}
+                {#{% set intervals = chord.notes | intervals_from_formula(chord.root_string|int(), chord.fret_modifier|int())  %}#}
+                {% set fret_modifer = chord.fret_modifier%}
+                {% set spans_dict = chord.notes|note_spans() %}
+                {% set x_flag = spans_dict[1] %}
+                {% set single_note_lists = received_chord|single_note_lists() %}
+                {% set note_spans_ = chord.notes|note_spans() %}
+                {% set note_list = [0,1,2,3,4,5] %}
+                {% set x_indexes = spans_dict[2] %}
+
+
+                <svg viewBox="0 0 255 360" width="245" height="300" class="chords svg-element">
+                        <rect x="0" y="0" rx="10" ry="10" width="100%" height="100%" fill="#F8F9FA" />
+    <!-- Vertical string lines -->
+                        {% for i in range(6) %}
+                        <line x1="{{ 50 + i * 35 }}" y1="50" x2="{{ 50 + i * 35 }}" y2="300" stroke="black" stroke-width="{{ 6 - i }}" />
+                        {% endfor %}
+
+    <!-- horizontal frets lines -->
+                        {% for i in range(6) %}
+                        <line x1="47" y1="{{50 + (i * 50)}}" x2="226" y2="{{50 + (i * 50)}}" stroke="black" stroke-width="{{ 7 if fret_number == 0 and i == 0 else 2 }}" />
+                        {% endfor %}
+    <!-- THIS BLOCK DEALS WITH CHORDS THAT ARE > ZERO FRET  -->
+                        {% if fret_number > 0 %}
+    <!-- For loop manually set to 5 because our chord boxes never exceed 5 frets in size -->
+                                {% for i in range (5)%}
+    <!-- Next for loop looks for notes in the dictionary using i as the index so, 0,1,2,3,4  -->
+                                        {% for list in note_spans_[0][i] %}
+    <!-- if i is 0 we're dealing with the barre at base position BECAUSE we're at fret  > 0 therefore  it is going to be a line -->
+                                                {% if i == 0 %}
+                                                        {% if note_spans_[0][i]|length > 1 and x_flag == False %}
+                                                        <!-- if note spans > 1 i.e. more than 1 string is used at fret i, draw this as a barre line -->
+                                                                <line x1="{{note_spans_[0][0][0][0]|int() + 49 + (35 * note_spans_[0][0][0][0]|int())}}" y1="{{50 + 35}}" x2="{{ 35 * ((note_spans_[0][0][note_spans_[0][0]|length - 1][1] + note_spans_[0][0][note_spans_[0][0]|length - 1][0])) + 15}}" y2="{{50 + 35}}" stroke="#000000" stroke-width="22" stroke-linecap="round" />
+                                                        {% endif %}
+                                                        <!-- if note spans > 1 i.e. more than 1 string is used at fret i BUT x_flag is true
+                                                             indicates the span MAY be interupted by a muted string -->
+                                                        {% if note_spans_[0][i]|length > 1 and x_flag == True %}
+                                                                <!-- check if position 0 or position 5 is already identified as an X or if both are:
+                                                                     if so it means we have either a 5 or 4 fret span. If spans_dict[4] > 4 i.e. more than 4 fingers used
+                                                                     we must use a barre otherwise we don't have enough fingers. -->
+                                                                {% if 2 not in x_indexes and 1 not in x_indexes %}
+                                                                        <line x1="{{note_spans_[0][0][0][0]|int() + 49 + (35 * note_spans_[0][0][0][0]|int())}}" y1="{{50 + 35}}" x2="{{ 35 * ((note_spans_[0][0][note_spans_[0][0]|length - 1][1] + note_spans_[0][0][note_spans_[0][0]|length - 1][0])) + 15}}" y2="{{50 + 35}}" stroke="#000000" stroke-width="22" stroke-linecap="round" />
+                                                                        <!-- if we're not drawing a line, we must therefore be drawing a circle for individual notes and need to loop
+                                                                             over the notes to feed the co-ordinates into the SVG for drawing -->
+                                                                {% else %}
+                                                                        {% for j in range (note_spans_[0][i]|length) %}
+                                                                                {% for k in range (note_spans_[0][i][j][1])%}
+                                                                                        <circle cx="{{ 50 + (note_spans_[0][i][j][0]|int * 35) + (k * 35)}}" cy="{{  (i * 50) + 50 + 35 }}" r="11" fill="black" style="z-index: 10;" />
+                                                                                {% endfor %}
+                                                                        {% endfor %}
+                                                                {% endif %}
+                                                        {% endif %}
+
+                                                        <!-- if note spans is 1 i.e. a clear single note print a circle -->
+                                                        {% if note_spans_[0][i]|length == 1 %}
+                                                                <circle cx="{{ 50 + (note_spans_[0][i][0][0]|int * 35)}}" cy="{{  (i * 50) + 50 + 35 }}" r="11" fill="black" 2 style="z-index: 10;" />
+                                                        {% endif %}
+                                                        <!-- this draws the barre to span the 0's where we have conditions not covered above -->
+                                                        {% if note_spans_[0][i][0][1] > 1 %}
+                                                                <line x1="{{note_spans_[0][0][0][0]|int() + 49 + (35 * note_spans_[0][0][0][0]|int())}}" y1="{{50 + 35}}" x2="{{ 35 * ((note_spans_[0][0][note_spans_[0][0]|length - 1][1] + note_spans_[0][0][note_spans_[0][0]|length - 1][0])) + 15}}" y2="{{50 + 35}}" stroke="#000000" stroke-width="22" stroke-linecap="round" />
+                                                        {% endif %}
+                                                        <!-- for all other frets > 0 -->
+                                                {% elif i > 0 %}
+                                                <!-- loop over the notes checking if there is a flag for a barre and if so draw a barre line, if not draw circles
+                                                     Also check for if note_spans_[0][i] has more than 1 entry, if so the length of the barre needs to be worked out from both entries
+                                                     using the inner k loop
+                                                     the elif below draws correctly if the note_spans_[0][i] has just one entry
+                                                     and therefore omits the k loop -->
+                                                        {% if note_spans_[0][i]|length > 1 %}
+                                                                {% for j in range (note_spans_[0][i]|length) %}
+                                                                        {% for k in range (note_spans_[0][i][j][1]) %}
+                                                                                {% if note_spans_[0][i][j][2] %}
+                                                                                        <line x1="{{ 35 * note_spans_[0][i][j][0]  + 50}}" y1="{{(i * 50) + 50 + 35}}" x2="{{ 35 * (note_spans_[0][i][j][0] + note_spans_[0][i][j][1] - 1)  + 50 }}" y2="{{(i * 50) + 50 + 35}}" stroke="#000000" stroke-width="22" stroke-linecap="round" />
+                                                                                {% else %}
+                                                                                        <circle cx="{{ 50 + (note_spans_[0][i][j][0]|int * 35) + (k * 35)}}" cy="{{  (i * 50) + 50 + 35 }}" r="11" fill="black" 2 style="z-index: 10;" />
+                                                                                {% endif %}
+                                                                        {% endfor %}
+                                                                {% endfor %}
+                                                        {% elif note_spans_[0][i]|length == 1 %}
+                                                                {% for j in range(note_spans_[0][i][0][1]|int) %}
+                                                                        {% if note_spans_[0][i][0][2] %}
+                                                                                <line x1="{{ 35 * note_spans_[0][i][0][0]  + 50}}" y1="{{(i * 50) + 50 + 35}}" x2="{{ 35 * (note_spans_[0][i][0][0] + note_spans_[0][i][0][1] - 1)  + 50 }}" y2="{{(i * 50) + 50 + 35}}" stroke="#000000" stroke-width="22" stroke-linecap="round" />
+                                                                        {% else %}
+                                                                                <circle cx="{{ 50 + (note_spans_[0][i][0][0]|int * 35) + (35 * j)}}" cy="{{  (i * 50) + 50 + 35 }}" r="11" fill="black" 2 style="z-index: 10;" />
+                                                                        {% endif %}
+                                                                {% endfor %}
+                                                        {% endif %}
+                                                {% endif %}
+                                        {% endfor %}
+                                {% endfor %}
+                        {% endif %}
+
+    <!-- THIS BLOCK DEALS WIHT CORDS THAT ARE AT ZERO FRET  -->
+    <!-- if we're at 0 fret we won't ever need a Barre across the lowest fret -->
+    <!-- Becase ALL the chord formulas have effectively been produced to leave enough fingers for a barre should it be needed  -->
+    <!-- the side effect is that when at zero fret we'll ALWAYS have enough fingers to play these chords
+         without ever using a barre hence the simpler loops to only ever print circles below -->
+                        {% if fret_number == 0 %}
+    <!-- items in the note span_spans_0 index  - all the note pairs -->
+                                {% for i in range (5)%}
+    <!-- the list is the list of pairs per fret -->
+                                        {% for list in note_spans_[0][i] %}
+    <!-- if i is 0 we're dealing with the barre at base position  BECAUSE we're at fret  > 0 it is going to be a line -->
+                                                {% if i > 0 %}
+                                                        {% if note_spans_[0][i]|length > 1 %}
+                                                                {% for j in range (note_spans_[0][i]|length) %}
+                                                                        {% for k in range (note_spans_[0][i][j][1])%}
+                                                                                <circle cx="{{ 50 + (note_spans_[0][i][j][0]|int * 35) + (k * 35)}}" cy="{{  (i * 50) + 35 }}" r="11" fill="black" 2 style="z-index: 10;" />
+                                                                        {% endfor %}
+                                                                {% endfor %}
+                                                        {% elif note_spans_[0][i]|length == 1 %}
+                                                                {% for j in range(note_spans_[0][i][0][1]|int) %}
+                                                                        <circle cx="{{ 50 + (note_spans_[0][i][0][0]|int * 35) + (35 * j)}}" cy="{{  (i * 50) + 35 }}" r="11" fill="black" 2 style="z-index: 10;" />
+                                                                {% endfor %}
+                                                        {% endif %}
+                                                {% endif %}
+                                        {% endfor %}
+                                {% endfor %}
+                        {% endif %}
+
+                        {% for note in chord.notes %}
+
+    {# LABELLING BLOCK ----------------------------------------- #}
+    <!-- <p>{{note['loop.index0']}}</p> -->
+    <!-- horizontal -->
+                                {% set xCoordinate = 50 %}
+                                {% set yCoordinate = 35 %}
+
+    <!-- vertical: sets row height for each non X value based on it's fret number -->
+    <!-- if note is a numnber i.e. a note Y co-ord is note number eg * 50 = 100. So this will place vertically 140 untis from top so 2 FRETS down-->
+                                {% if note != "X" %}
+                                        {% set yCoordinate = 40 + (note|int() * 50) %}
+                                {% endif %}
+
+    <!-- 2 if blocks determie if an X is encountered or a 0 If so they draw the character -->
+    <!-- On the top line so Y co-ord will remain constant, x co-ord moves to next string with the loop -->
+
+    <!-- Print interview labels here -->
+
+
+
+    {# END OF LABELLING BLOCK ------------------------------------ #}
+
+                        {% endfor %}
+
+                        {% for note in chord.notes %}
+
+    {# LABELLING BLOCK ----------------------------------------- #}
+    <!-- <p>{{note['loop.index0']}}</p> -->
+    <!-- horizontal -->
+                                {% set xCoordinate = 42 + ((loop.index0) * 35) %}
+                                {% set yCoordinate = 42 %}
+
+    <!-- vertical: sets row height for each non X value based on it's fret number -->
+    <!-- if note is a numnber i.e. a note Y co-ord is note number eg * 50 = 100. So this will place vertically 140 untis from top so 2 FRETS down-->
+                                {% if note != "X" %}
+                                        {% set yCoordinate = 40 + (note|int() * 50) %}
+                                {% endif %}
+
+    <!-- 2 if blocks determie if an X is encountered or a 0 If so they draw the character -->
+    <!-- On the top line so Y co-ord will remain constant, x co-ord moves to next string with the loop -->
+                                {% if note == 0 and fret_number == 0 %}
+                                        <text x="{{ xCoordinate }}" y="{{ 42 }}" font-family="Arial" font-size="20"  font-weight="bold" fill="black">O</text>
+                                {% endif %}
+                                {% if note == "X" %}
+                                        <text x="{{ xCoordinate }}" y="{{ 42 }}" font-family="Arial" font-size="20" font-weight="bold" fill="black">X</text>
+                                {% endif %}
+
+                                {% if note != "X" %}
+                                        {% set guitar_neck_index = (6 - loop.index0) | string %}
+
+
+    {# this block draws the notes at the bottom of the diagram #}
+                                        <!-- {% if root in guitar_neck[guitar_neck_index] %}
+                                                <text x="{{ xCoordinate - 3 }}" y="{{ 340 }}" font-family="Arial" font-size="14" fill="black">({{ guitar_neck[guitar_neck_index][chord.notes[loop.index0] + fret_number] }})</text>
+                                        {% elif root in guitar_neck_flats[guitar_neck_index] %}
+                                                <text x="{{ xCoordinate - 3 }}" y="{{ 340 }}" font-family="Arial" font-size="14" fill="black">({{ guitar_neck_flats[guitar_neck_index][chord.notes[loop.index0] + fret_number] }})</text>
+                                        {% endif %} -->
+{# this block draws the root notes (smaller red circels) over top of the black circles to indicate root note positions #}
+                                        {% if root in guitar_neck[guitar_neck_index] %}
+                                                {% if open_or_not == False and guitar_neck[guitar_neck_index][chord.notes[loop.index0] + fret_number] == root %}
+                                                        <circle cx="{{ xCoordinate + 8 }}" cy="{{ (yCoordinate) - 5 + 50 }}" r="8" fill="#e63546" style="z-index: 10;" />
+
+                                                {% elif open_or_not == True and guitar_neck[guitar_neck_index][chord.notes[loop.index0] + fret_number] == root %}
+                                                        <circle cx="{{ xCoordinate + 8 }}" cy="{{ (yCoordinate) - 5}}" r="8" fill="#e63546" />
+                                                {% endif %}
+                                        {% elif root in guitar_neck_flats[guitar_neck_index] %}
+                                                {% if not open_or_not  and guitar_neck_flats[guitar_neck_index][chord.notes[loop.index0] + fret_number] == root %}
+                                                        <circle cx="{{ xCoordinate + 8 }}" cy="{{ (yCoordinate) - 5 + 50}}" r="8" fill="#e63546" style="z-index: 10;" />
+
+                                                {% elif open_or_not and guitar_neck_flats[guitar_neck_index][chord.notes[loop.index0] + fret_number] == root %}
+                                                        <circle cx="{{ xCoordinate + 8 }}" cy="{{ (yCoordinate) - 5 }}" r="8" fill="#e63546" />
+                                                {% endif %}
+                                        {% endif %}
+                                {% endif %}
+
+    {# Draws fret numbers for reference#}
+                                {% if fret_number > 9 %}
+                                        {% set x_ = 12 %}
+                                {% else %}
+                                        {% set x_ = 18 %}
+                                {% endif %}
+                                {% if fret_number != 0 %}
+                                        <!-- <text x="{{ x_ }}" y="{{ 58 + 25 }}" font-family="Arial" font-size="20" fill="black">{{ fret_number }}</text> -->
+                                        <text x="{{ x_ }}" y="{{ 58 + 25 }}" font-family="Arial" font-size="20" fill="black">{{ fret_number}}</text>
+                                        <!-- <text x="{{ x_ }}" y="{{ 58 + 225 }}" font-family="Arial" font-size="20" fill="black">{{ fret_number + 4}}</text> -->
+                                {% elif fret_number == 0 %}
+                                        <text x="{{ x_ }}" y="{{ 58 + 125 }}" font-family="Arial" font-size="20" fill="black">{{ fret_number + 3 }}</text>
+                                {% endif %}
+                        {% endfor %}
+                </svg>
+        {% endfor %}
+{% endblock%}
+
