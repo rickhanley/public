@@ -518,7 +518,6 @@ The grid template is set up to loop over "chords" (chords=chords_db) for however
                 {% set total_notes = chord.notes | finger_counter %}
                 {% set open_or_not = root | open_or_not(chord['root_string'], chord.fret_modifier|int(), fret_number) %}
                 {% set fret_number = fret_number|int() %}
-                {#{% set intervals = chord.notes | intervals_from_formula(chord.root_string|int(), chord.fret_modifier|int())  %}#}
                 {% set fret_modifer = chord.fret_modifier%}
                 {% set spans_dict = chord.notes|note_spans() %}
                 {% set x_flag = spans_dict[2] %}
